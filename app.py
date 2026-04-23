@@ -123,23 +123,173 @@ else:
             st.success("✅ Guardado correctamente")
             st.balloons()
 
-    # ==================== CHATBOT ESPECIALIZADO ====================
-    elif menu == "🤖 Chatbot Especializado":
-        st.subheader("🤖 Chatbot Especializado en Salud Mental de Jóvenes")
-        if 'chat_history' not in st.session_state:
-            st.session_state.chat_history = []
-        mensaje = st.text_input("Escribe cómo te sientes:")
-        if st.button("Enviar"):
-            st.session_state.chat_history.append(("Tú", mensaje))
-            # Respuestas largas y especializadas (mismo que antes)
-            lower = mensaje.lower()
-            if "ansiedad" in lower:
-                respuesta = "La ansiedad es muy común en estudiantes. Prueba la respiración 4-7-8 y divide tus tareas..."
+   import streamlit as st
+import random
+
+# ==================== CHATBOT ESPECIALIZADO EN NICARAGUA ====================
+elif menu == "🤖 Chatbot Especializado":
+    st.subheader("🤖 EstuMind - Chatbot de Salud Mental para Jóvenes Nicaragüenses")
+    
+    # AVISO IMPORTANTE - SOLO NICARAGUA
+    st.error("""
+    **⚠️ AVISO IMPORTANTE - SOLO PARA NICARAGUA**  
+    Este chatbot es una **herramienta de apoyo educativo** y **NO sustituye** atención profesional.  
+    
+    **Si estás en crisis, tienes pensamientos de autolesión o suicidio:**
+    
+    - **Llama inmediatamente al 118** (Emergencias Nacionales de Nicaragua)  
+    - Acude al **Centro de Atención Psicosocial (CAPS)** más cercano (servicio **gratuito** del MINSA)  
+    - En Managua: **Hospital Psicosocial “Doctor Jacobo Marcos Frech”** (km 12.5 carretera vieja a León) – atención **24 horas** para crisis emocionales  
+    - Ve a tu centro de salud más cercano o habla con un orientador escolar / familiar de confianza.
+    
+    La salud mental es prioridad en Nicaragua. ¡No estás solo/a!
+    """)
+    
+    # Inicializar historial
+    if 'chat_history' not in st.session_state:
+        st.session_state.chat_history = []
+    
+    # Función de respuestas especializada
+    def obtener_respuesta(mensaje: str) -> str:
+        msg = mensaje.lower().strip()
+        
+        # === 1. CRISIS (prioridad máxima - solo Nicaragua) ===
+        crisis_kw = ["suicidio", "matarme", "quiero morir", "no quiero vivir", "autolesión", 
+                     "cortarme", "lastimarme", "acabar con todo", "no soporto más"]
+        if any(kw in msg for kw in crisis_kw):
+            return """Lo siento mucho que estés pasando por esto. **Eres valioso/a y mereces ayuda ahora mismo.**
+
+**Acción inmediata:**
+- Llama al **118** (Emergencias Nacionales)
+- Ve al **Centro de Atención Psicosocial (CAPS)** más cercano (gratuito del MINSA)
+- En Managua: **Hospital Psicosocial “Doctor Jacobo Marcos Frech”** (km 12.5, carretera vieja a León) – abierto 24 horas
+
+No estás solo/a. Hay profesionales nicaragüenses listos para ayudarte.  
+¿Quieres que te explique cómo llegar al CAPS más cercano o cómo pedir apoyo en tu colegio?"""
+        
+        # === 2. SALUDOS ===
+        if any(kw in msg for kw in ["hola", "buenos días", "buenas", "qué tal", "hey"]):
+            return "¡Hola! Soy **EstuMind**, tu compañero especializado en salud mental de jóvenes nicaragüenses. 😊\n\nEstoy aquí para escucharte. Cuéntame cómo te sientes o qué te preocupa."
+        
+        if any(kw in msg for kw in ["gracias", "thank you"]):
+            return "¡De nada! Me alegra poder apoyarte. Recuerda que los CAPS del MINSA están para ayudarte gratis. ¿Algo más en lo que te pueda acompañar?"
+        
+        # === 3. ANSIEDAD ===
+        if any(kw in msg for kw in ["ansiedad", "ansioso", "preocupado", "nervios", "pánico", "miedo"]):
+            respuestas = [
+                "La ansiedad es muy común en jóvenes nicaragüenses por los estudios, la presión familiar y la situación económica. Prueba la respiración 4-7-8: inhala 4 seg, retiene 7, exhala 8. ¿Quieres que te guíe ahora?",
+                "Entiendo lo fuerte que puede sentirse. En Nicaragua muchos jóvenes usan la técnica 5-4-3-2-1 para calmarse. ¿Qué te está generando más ansiedad en este momento (exámenes, familia, futuro)?",
+                "La ansiedad se maneja mejor cuando la compartes. Los CAPS del MINSA ofrecen apoyo gratuito. Mientras, divide tus tareas en pasos pequeños. ¿Quieres tips específicos para ansiedad por estudios?",
+                "Tu cerebro está en alerta, pero la mayoría de las cosas que tememos no pasan. ¿Has probado escribir tus preocupaciones y 'dejarlas' hasta mañana? Es una técnica que ayuda mucho."
+            ]
+            return random.choice(respuestas)
+        
+        # === 4. DEPRESIÓN / TRISTEZA ===
+        elif any(kw in msg for kw in ["triste", "deprimido", "sin ganas", "vacío", "llorar", "solo", "depresión"]):
+            respuestas = [
+                "Lamento que te sientas así. En Nicaragua hay muchos jóvenes pasando por lo mismo. Pequeños pasos como salir a caminar, hablar con alguien de confianza o ir al CAPS ayudan. ¿Hay alguien en quien confíes?",
+                "No estás solo/a. La tristeza prolongada es señal de que necesitas apoyo. Los Centros de Atención Psicosocial (CAPS) del MINSA son gratuitos y están en todo el país. ¿Quieres que te ayude a ubicar el más cercano?",
+                "Es valiente que lo digas. Si la tristeza dura más de dos semanas, ve al CAPS o centro de salud. ¿Cómo ha estado tu energía y sueño últimamente?",
+                "La depresión no es flojera. Celebra cada cosa pequeña que logras. En Nicaragua los servicios de salud mental son gratuitos. ¿Te gustaría tips para mejorar el ánimo día a día?"
+            ]
+            return random.choice(respuestas)
+        
+        # === 5. ESTRÉS / EXÁMENES ===
+        elif any(kw in msg for kw in ["estrés", "estresado", "examen", "prueba", "calificación", "estudiar", "presión"]):
+            respuestas = [
+                "El estrés por exámenes y presión familiar es muy común aquí. Usa Pomodoro: 25 min estudio + 5 min descanso. ¿Cuánto tiempo tienes hasta tu próximo examen?",
+                "Tu valor no depende de una nota. Organiza por prioridad. Los orientadores escolares y los CAPS pueden ayudarte gratis. ¿Quieres que te ayude a hacer un plan de estudio realista?",
+                "El estrés afecta mucho el rendimiento. Prueba 2 minutos de 'power pose' antes de estudiar. ¿Estás preparando algo específico ahora?",
+                "Divide las tareas grandes en pequeñas. En Nicaragua muchos jóvenes logran equilibrar estudios y bienestar con apoyo del MINSA. ¿Te ayudo a crear un horario?"
+            ]
+            return random.choice(respuestas)
+        
+        # === 6. SUEÑO ===
+        elif any(kw in msg for kw in ["sueño", "insomnio", "no duermo", "cansado", "desvelado"]):
+            respuestas = [
+                "El sueño es clave. Intenta dormir y despertar a la misma hora todos los días. Evita el celular 1 hora antes. ¿A qué hora sueles acostarte?",
+                "Si no puedes dormir, prueba relajación progresiva (tensar y relajar músculos). Los problemas de sueño son muy atendidos en los CAPS. ¿Cuántas horas duermes normalmente?",
+                "La ansiedad por el día siguiente quita el sueño. Escribe tus preocupaciones antes de dormir. ¿Quieres una rutina completa de higiene del sueño?",
+                "El cansancio constante puede mejorarse con hábitos. Si persiste, ve al centro de salud. ¿Qué has probado ya?"
+            ]
+            return random.choice(respuestas)
+        
+        # === 7. AUTOESTIMA ===
+        elif any(kw in msg for kw in ["autoestima", "inseguro", "feo", "no sirvo", "comparo", "no soy suficiente"]):
+            respuestas = [
+                "La autoestima se construye con acciones diarias. Anota 3 cosas que hiciste bien hoy (aunque sean pequeñas). ¿Qué te hace sentir más inseguro?",
+                "Compararte con otros (especialmente en redes) te hace daño. Todos tenemos inseguridades. Prueba hablarte con la misma amabilidad que a un amigo. ¿Quieres ejercicios prácticos?",
+                "Mírate al espejo y di 3 cosas que te gustan de ti. Es un ejercicio poderoso. ¿Te animas a intentarlo?",
+                "La baja autoestima se trabaja con apoyo profesional. Los CAPS del MINSA te pueden ayudar gratis. ¿Hay algo específico que te hace dudar de ti?"
+            ]
+            return random.choice(respuestas)
+        
+        # === 8. BULLYING / ACOSO ===
+        elif any(kw in msg for kw in ["bullying", "acosan", "me molestan", "rumores", "excluyen"]):
+            respuestas = [
+                "**El acoso NO es tu culpa.** Cuéntaselo ya a un adulto de confianza (profesor, orientador o familiar). Las escuelas tienen protocolos. ¿Es en persona o por redes?",
+                "Documenta todo (fechas, capturas, testigos). Ve al CAPS o centro de salud si te afecta mucho. Eres valiente por hablarlo. ¿Quieres ayuda para contárselo a alguien?",
+                "Si te sientes en peligro, llama al 118. Tu seguridad es lo primero. ¿Has hablado con alguien más sobre esto?",
+                "El cyberbullying duele igual. Bloquea, reporta y no respondas. Los CAPS también apoyan en estos casos. ¿En qué plataforma pasa?"
+            ]
+            return random.choice(respuestas)
+        
+        # === 9. REDES SOCIALES ===
+        elif any(kw in msg for kw in ["redes", "instagram", "tiktok", "likes", "comparo"]):
+            respuestas = [
+                "Las redes están hechas para enganchar y hacerte sentir menos. Prueba reducir a 30-45 minutos al día por una semana y verás la diferencia. ¿Estás dispuesto a intentarlo?",
+                "Recuerda: solo ves lo mejor de la vida de los demás. Curatea tu feed con cuentas positivas. ¿Qué cuentas te hacen sentir peor?",
+                "El FOMO es real. Apaga notificaciones en horario de estudio y sueño. Muchos jóvenes nicaragüenses mejoran su ánimo así. ¿Quieres un reto de 7 días?",
+                "Si sientes que controlan tu vida, usa el modo gris del celular. ¿Cuánto tiempo pasas aproximadamente?"
+            ]
+            return random.choice(respuestas)
+        
+        # === 10. RELACIONES / FAMILIA ===
+        elif any(kw in msg for kw in ["amigos", "novio", "novia", "pareja", "familia", "padres", "presión familiar"]):
+            respuestas = [
+                "Las relaciones y la presión familiar son temas fuertes en Nicaragua. Habla con calma usando 'yo siento...'. ¿Quieres tips para mejorar la comunicación en casa?",
+                "Los amigos tóxicos drenan energía. Rodéate de quienes te apoyan. ¿Hay alguien en quien realmente confíes?",
+                "La presión por notas o futuro es común. Tus papás probablemente quieren lo mejor, pero a veces duele. ¿Has intentado una conversación tranquila?",
+                "Si hay mucho conflicto en casa, busca apoyo en el CAPS o orientador escolar. ¿Cómo está la situación últimamente?"
+            ]
+            return random.choice(respuestas)
+        
+        # === 11. RESPUESTA GENERAL ===
+        else:
+            if len(msg) < 8 or "?" in msg:
+                return "¡Buena pregunta! Para ayudarte mejor, ¿puedes contarme más? Por ejemplo: ¿es ansiedad, tristeza, exámenes, familia, amigos o algo más?"
             else:
-                respuesta = "Gracias por contarme. Cuéntame más detalles y te ayudo con consejos profundos."
-            st.session_state.chat_history.append(("EstuMind", respuesta))
-        for rol, texto in st.session_state.chat_history:
-            st.write(f"**{rol}:** {texto}")
+                generales = [
+                    "Gracias por confiar. ¿Desde cuándo te sientes así? ¿Qué has intentado? Los CAPS del MINSA están para apoyarte gratis.",
+                    "Entiendo que es importante para ti. ¿Quieres tips prácticos, cómo ubicar un CAPS cerca de ti, o enfocarnos en algo específico?",
+                    "No estás solo/a. En Nicaragua hay servicios gratuitos de salud mental en todo el país. ¿Qué te gustaría trabajar hoy?",
+                    "Me alegra que busques apoyo. Para personalizarlo: ¿cómo te afecta esto en tu día a día?"
+                ]
+                return random.choice(generales)
+    
+    # === INTERFAZ DEL CHAT ===
+    for rol, texto in st.session_state.chat_history:
+        if rol == "Tú":
+            with st.chat_message("user"):
+                st.write(texto)
+        else:
+            with st.chat_message("assistant", avatar="🧠"):
+                st.write(texto)
+    
+    prompt = st.chat_input("Escribe cómo te sientes o tu consulta (en Nicaragua)...")
+    
+    if prompt:
+        st.session_state.chat_history.append(("Tú", prompt))
+        respuesta = obtener_respuesta(prompt)
+        st.session_state.chat_history.append(("EstuMind", respuesta))
+        st.rerun()
+    
+    # Botón limpiar
+    if st.button("🗑️ Limpiar conversación"):
+        st.session_state.chat_history = []
+        st.rerun()
+    
+    st.caption("💡 Tip: Mientras más específico seas, mejor te puedo apoyar. Los servicios del MINSA son gratuitos para todos los jóvenes nicaragüenses.")
 
     # ==================== TEST DE SALUD MENTAL (lo que te gustó) ====================
     elif menu == "🧪 Test de Salud Mental":
