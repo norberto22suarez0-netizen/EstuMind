@@ -117,7 +117,7 @@ else:
             st.success("✅ Guardado correctamente")
 
     elif menu == "🤖 Chatbot Especializado":
-        st.subheader("🤖 EstuMind - Chatbot con Inteligencia Artificial")
+        st.subheader("🤖 EstuMind - Tu asistente de salud mental")
 
         groq_api_key = st.sidebar.text_input("🔑 Groq API Key", type="password", 
                                              value="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")
