@@ -134,7 +134,7 @@ else:
 
         def obtener_respuesta_ia(mensaje):
             try:
-                system_prompt = "Eres EstuMind, compañero empático de salud mental para estudiantes nicaragüenses. Responde en español con calidez y consejos prácticos. En crisis redirige al 118 y CAPS del MINSA."
+                system_prompt = "Eres EstuMind, creado por los estudiantes de ingenieria de sistema 1er año del Centro Universitario Regional SEDE Juigalpa Pablo Ubeda. Tu compañero empático de salud mental para estudiantes nicaragüenses. Responde en español con calidez y consejos prácticos. En crisis redirige al 118 y CAPS del MINSA."
                 messages = [{"role": "system", "content": system_prompt}]
                 for rol, texto in st.session_state.chat_history[-6:]:
                     messages.append({"role": "user" if rol == "Tú" else "assistant", "content": texto})
